@@ -4,20 +4,27 @@ import axios, { AxiosResponse } from 'axios';
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+interface User {
+    id: Number;
+    name: String
+    surname: String;
+    bugs:       [Bug];
+}
+
+interface Proyect {
+    id: Number;
+    name: String;
+    description: String;
+    bugs:       [Bug];
+}
 
 interface Bug {
     id: Number;
     description: String;
     creationDate: Date;
+    project: Proyect;
+    user:   User;
 }
-
-interface User {
-    id: Number;
-    name: String
-    surname: String;
-    bugs:   [Bug]
-}
-
 
 // getting all users
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -95,7 +102,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 const addUser = async (req: Request, res: Response, next: NextFunction) => {
     // get the data from req.body
     const name: string = req.body.title;
-    const surname: string = req.body.surname;
+    const surname: string = req.body.body;
     // add the user
     let response: User = await prisma.user.create({
         data:{
