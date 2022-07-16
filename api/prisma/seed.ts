@@ -1,7 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+import { PrismaClient, Prisma } from '@prisma/client'
+const prisma = new PrismaClient()
 
-const userData = [
+const userData: Prisma.UserCreateInput[] = [
   {
     name:   'Leanne Graham',
     surname: 'Bret'
@@ -24,7 +24,7 @@ const userData = [
   }
 ]
 
-const projectData = [
+const projectData: Prisma.ProjectCreateInput[]  = [
   {
     name:        'Test project 1',
     description: 'This is a test project to associate bug'

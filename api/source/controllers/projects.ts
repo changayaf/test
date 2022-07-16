@@ -1,25 +1,13 @@
-/** source/controllers/posts.ts */
-import { Request, Response, NextFunction } from 'express';
-import axios, { AxiosResponse } from 'axios';
+import { Request, Response } from 'express';
+
+import { Project } from '../interface';
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 
-interface Bug {
-    id: Number;
-    description: String;
-    creationDate: Date;
-}
-
-interface Project {
-    id: Number;
-    name: String;
-    description: String;
-    bugs:   [Bug]
-}
-
 // getting all projects
-const getProjects = async (req: Request, res: Response, next: NextFunction) => {
+const getProjects = async (req: Request, res: Response) => {
     // get all projects
     const projects: [Project] = await prisma.project.findMany({
         include: {
@@ -32,7 +20,7 @@ const getProjects = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // getting a single user
-const getProject = async (req: Request, res: Response, next: NextFunction) => {
+const getProject = async (req: Request, res: Response) => {
     // get the project id from the req
     const id: string = req.params.id;
     // get the project
@@ -50,7 +38,7 @@ const getProject = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // updating a project
-const updateProject = async (req: Request, res: Response, next: NextFunction) => {
+const updateProject = async (req: Request, res: Response) => {
     // get the project id from the req.params
     const id: string = req.params.id;
     // get the data from req.body
@@ -72,7 +60,7 @@ const updateProject = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 // deleting a project
-const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
+const deleteProject = async (req: Request, res: Response) => {
     // get the project id from req.params
     const id: string = req.params.id;
     // delete the project
@@ -89,7 +77,7 @@ const deleteProject = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 // adding a project
-const addProject = async (req: Request, res: Response, next: NextFunction) => {
+const addProject = async (req: Request, res: Response) => {
     // get the data from req.body
     const description: string = req.body.description;
     // add the user

@@ -1,26 +1,13 @@
-/** source/controllers/posts.ts */
-import { Request, Response, NextFunction } from 'express';
-import axios, { AxiosResponse } from 'axios';
+
+import { Request, Response } from 'express';
+
+import { User } from '../interface';
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-
-interface Bug {
-    id: Number;
-    description: String;
-    creationDate: Date;
-}
-
-interface User {
-    id: Number;
-    name: String
-    surname: String;
-    bugs:   [Bug]
-}
-
-
 // getting all users
-const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+const getUsers = async (req: Request, res: Response) => {
     // get all users
     const users: [User] = await prisma.user.findMany({
         include: {
@@ -33,7 +20,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // getting a single user
-const getUser = async (req: Request, res: Response, next: NextFunction) => {
+const getUser = async (req: Request, res: Response) => {
     // get the user id from the req
     const id: string = req.params.id;
     // get the user
@@ -51,7 +38,7 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // updating a user
-const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+const updateUser = async (req: Request, res: Response) => {
     // get the user id from the req.params
     const id: string = req.params.id;
     // get the data from req.body
@@ -75,7 +62,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // deleting a user
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+const deleteUser = async (req: Request, res: Response) => {
     // get the user id from req.params
     const id: string = req.params.id;
     // delete the user
@@ -92,7 +79,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // adding a user
-const addUser = async (req: Request, res: Response, next: NextFunction) => {
+const addUser = async (req: Request, res: Response) => {
     // get the data from req.body
     const name: string = req.body.title;
     const surname: string = req.body.surname;
