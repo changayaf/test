@@ -11,32 +11,32 @@ interface Bug {
     creationDate: Date;
 }
 
-interface Proyect {
+interface Project {
     id: Number;
     name: String;
     description: String;
     bugs:   [Bug]
 }
 
-// getting all proyects
-const getProyects = async (req: Request, res: Response, next: NextFunction) => {
-    // get all proyects
-    const proyects: [Proyect] = await prisma.project.findMany({
+// getting all projects
+const getProjects = async (req: Request, res: Response, next: NextFunction) => {
+    // get all projects
+    const projects: [Project] = await prisma.project.findMany({
         include: {
             bugs: true
         }
     });
     return res.status(200).json({
-        data: proyects
+        data: projects
     });
 };
 
 // getting a single user
-const getProyect = async (req: Request, res: Response, next: NextFunction) => {
-    // get the proyect id from the req
+const getProject = async (req: Request, res: Response, next: NextFunction) => {
+    // get the project id from the req
     const id: string = req.params.id;
-    // get the proyect
-    const proyect: Proyect = await prisma.project.findUnique({
+    // get the project
+    const project: Project = await prisma.project.findUnique({
         where: {
             id: id
         },
@@ -45,18 +45,18 @@ const getProyect = async (req: Request, res: Response, next: NextFunction) => {
         }
     });
     return res.status(200).json({
-        data: proyect
+        data: project
     });
 };
 
-// updating a proyect
-const updateProyect = async (req: Request, res: Response, next: NextFunction) => {
-    // get the proyect id from the req.params
+// updating a project
+const updateProject = async (req: Request, res: Response, next: NextFunction) => {
+    // get the project id from the req.params
     const id: string = req.params.id;
     // get the data from req.body
     const description: string = req.body.description ?? null;
     // update the user
-    const response: Proyect = await prisma.project.update({
+    const response: Project = await prisma.project.update({
         where: {
             id
         },
@@ -67,16 +67,16 @@ const updateProyect = async (req: Request, res: Response, next: NextFunction) =>
     // return response
     return res.status(200).json({
         data: response,
-        message: 'Proyect update successfully'
+        message: 'project update successfully'
     });
 };
 
-// deleting a proyect
-const deleteProyect = async (req: Request, res: Response, next: NextFunction) => {
-    // get the proyect id from req.params
+// deleting a project
+const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
+    // get the project id from req.params
     const id: string = req.params.id;
-    // delete the proyect
-    const response: Proyect = await prisma.project.delete({
+    // delete the project
+    const response: Project = await prisma.project.delete({
         where: {
             id
         }
@@ -84,16 +84,16 @@ const deleteProyect = async (req: Request, res: Response, next: NextFunction) =>
     // return response
     return res.status(200).json({
         data: response,
-        message: 'Proyect deleted successfully'
+        message: 'project deleted successfully'
     });
 };
 
-// adding a Proyect
-const addProyect = async (req: Request, res: Response, next: NextFunction) => {
+// adding a project
+const addProject = async (req: Request, res: Response, next: NextFunction) => {
     // get the data from req.body
     const description: string = req.body.description;
     // add the user
-    let response: Proyect = await prisma.user.create({
+    let response: Project = await prisma.user.create({
         data:{
             description
         }
@@ -101,8 +101,8 @@ const addProyect = async (req: Request, res: Response, next: NextFunction) => {
     // return response
     return res.status(200).json({
         data: response,
-        message: 'Proyect insert successfully'
+        message: 'project insert successfully'
     });
 };
 
-export default { getProyects, getProyect, updateProyect, deleteProyect, addProyect };
+export default { getProjects, getProject, updateProject, deleteProject, addProject };

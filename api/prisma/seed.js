@@ -24,7 +24,7 @@ const userData = [
   }
 ]
 
-const proyectData = [
+const projectData = [
   {
     name:        'Test project 1',
     description: 'This is a test project to associate bug'
@@ -64,18 +64,18 @@ async function main() {
     console.log(`The data user has already been updated ...`);
   }
 
-  console.log(`Checking if the proyect already exists ...`);
-  const proyects = await prisma.project.findMany();
-  if (proyects.length === 0) {
-    console.log(`Inserting data Proyects ...`);
-    for (const proyect of proyectData) {
+  console.log(`Checking if the project already exists ...`);
+  const projects = await prisma.project.findMany();
+  if (projects.length === 0) {
+    console.log(`Inserting data projects ...`);
+    for (const project of projectData) {
       const p = await prisma.project.create({
-        data: proyect,
+        data: project,
       })
-      console.log(`Created proyect with id: ${p.id}`);
+      console.log(`Created project with id: ${p.id}`);
     }
   } else {
-    console.log(`The data proyect has already been updated ...`);
+    console.log(`The data project has already been updated ...`);
   }
 
   console.log(`Seeding finished.`);

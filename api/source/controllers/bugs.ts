@@ -11,7 +11,7 @@ interface User {
     bugs:       [Bug];
 }
 
-interface Proyect {
+interface Project {
     id: Number;
     name: String;
     description: String;
@@ -22,71 +22,75 @@ interface Bug {
     id: Number;
     description: String;
     creationDate: Date;
-    project: Proyect;
+    project: Project;
     user:   User;
 }
 
-// getting all users
-const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-    // get all users
-    const users: [User] = await prisma.user.findMany({
+// getting all bugs
+const getBugs = async (req: Request, res: Response, next: NextFunction) => {
+    // get all bugs
+    const bugs: [Bug] = await prisma.bug.findMany({
         include: {
-            bugs: true
+           user: true,
+           project: true
         }
     });
     return res.status(200).json({
-        data: users
+        data: bugs
     });
 };
 
-// getting a single user
-const getUser = async (req: Request, res: Response, next: NextFunction) => {
-    // get the user id from the req
+// getting a single bug
+const getBug = async (req: Request, res: Response, next: NextFunction) => {
+    // get the bug id from the req
     const id: string = req.params.id;
-    // get the user
-    const user: User = await prisma.user.findUnique({
+    // get the bug
+    const bug: Bug = await prisma.bug.findUnique({
         where: {
             id: id
         },
         include: {
-            bugs: true
+            user: true,
+            project: true
         }
     });
     return res.status(200).json({
-        data: user
+        data: bug
     });
 };
 
-// updating a user
-const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-    // get the user id from the req.params
+// updating a bug
+const updateBug = async (req: Request, res: Response, next: NextFunction) => {
+    // get the bug id from the req.params
     const id: string = req.params.id;
     // get the data from req.body
-    let name: string = req.body.name ?? null;
-    let surname: string = req.body.surname ?? null;
-    // update the user
-    let response: User = await prisma.user.update({
+    const description: string = req.body.description ?? null;
+    // update the bug
+    const response: Bug = await prisma.bug.update({
         where: {
             id
         },
         data: {
-            name,
-            surname
+            description
+        },
+        include: {
+            user: true,
+            project: true
         }
     })
     // return response
     return res.status(200).json({
         data: response,
-        message: 'User update successfully'
+        message: 'Bug update successfully'
     });
 };
 
-// deleting a user
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-    // get the user id from req.params
+// deleting a bug
+const deleteBug = async (req: Request, res: Response, next: NextFunction) => {
+    // get the bug id from req.params
     const id: string = req.params.id;
-    // delete the user
-    const response: User = await prisma.user.delete({
+    // delete the bug
+    const response: Bug = await prisma.bug.delete({
         where: {
             id
         }
@@ -94,27 +98,25 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     // return response
     return res.status(200).json({
         data: response,
-        message: 'User deleted successfully'
+        message: 'Bug deleted successfully'
     });
 };
 
-// adding a user
-const addUser = async (req: Request, res: Response, next: NextFunction) => {
+// adding a bug
+const addBug = async (req: Request, res: Response, next: NextFunction) => {
     // get the data from req.body
-    const name: string = req.body.title;
-    const surname: string = req.body.body;
+    const description: string = req.body.description;
     // add the user
-    let response: User = await prisma.user.create({
+    let response: Bug = await prisma.bug.create({
         data:{
-            name,
-            surname
+            description
         }
     })
     // return response
     return res.status(200).json({
         data: response,
-        message: 'User insert successfully'
+        message: 'Bug insert successfully'
     });
 };
 
-export default { getUsers, getUser, updateUser, deleteUser, addUser };
+export default { getBugs, getBug, updateBug, deleteBug, addBug };

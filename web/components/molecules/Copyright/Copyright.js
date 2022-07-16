@@ -7,7 +7,7 @@ export default function Copyright() {
     <Typography variant="body2" color="text.secondary" align="center">
       {'Copyright © '}
       <MuiLink color="inherit" href="https://github.com/changayaf/prueba">
-        Test Proyect
+        Test project
       </MuiLink>{' '}
       {new Date().getFullYear()}.
     </Typography>
