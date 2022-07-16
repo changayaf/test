@@ -1,0 +1,75 @@
+version: '3.3'
+
+############ NETWORKS ############
+networks:
+  test:
+    external: true
+
+############ VOLUMES ############
+volumes:
+    db:
+
+services:
+  ############ Support ############
+  # Traefik 2 - Reverse Proxy
+  traefik:
+    container_name: traefik
+    image: traefik:v2.5
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    restart: always
+    ports:
+      - "8080:80"
+    #  - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - oneway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+      #- "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
+  # Postgres SQL - Internal database production
+  postgres:
+    container_name: postgres
+    image: postgres:13.4-alpine
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+    networks:
+      - test
+
+  web:
+    container_name: web
+    image: web
+    build:
+      context: ./web/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=develop
+      - DATABASE_URL=postgresql://test:test@postgres:5432/BugsManager
+      - API=http://api.localhost:8080
+    depends_on:
+      - postgres
+    networks:
+      - test
+    #ports:
+    #  - 4000:4000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-gateway.rule=Host(`web.localhost`)"
+      - "traefik.http.routers.api-gateway.entrypoints=web"
+      - "traefik.http.services.api-gateway.loadbalancer.server.port=3000"
