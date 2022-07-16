@@ -3,7 +3,7 @@ if( process.env.NODE_ENV !== 'production'){
 }
 import http from 'http';
 import express, { Express } from 'express';
-import routes from './routes/posts';
+import routes from './routes/routes';
 
 const PORT = process.env.SERVER_PORT || 4000;
 
