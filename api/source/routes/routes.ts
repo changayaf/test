@@ -5,14 +5,14 @@ import bugs from '../controllers/bugs';
 const router = express.Router();
 
 // route users
-//router.get('/users', users.getUsers);
+router.get('/users', users.getUsers);
 //router.get('/user/:id', users.getUser);
 //router.put('/user/:id', users.updateUser);
 //router.delete('/user/:id', users.deleteUser);
 //router.post('/user', users.addUser);
 
 // route projects
-//router.get('/projects', projects.getProjects);
+router.get('/projects', projects.getProjects);
 //router.get('/project/:id', projects.getProject);
 //router.put('/project/:id', projects.updateProject);
 //router.delete('/project/:id', projects.deleteProject);

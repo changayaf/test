@@ -106,13 +106,7 @@ const SalaryToPay = () => {
                             <TextField
                                 id="startTime"
                                 name="startTime"
-                                type="time"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                inputProps={{
-                                    step: 300, // 5 min
-                                }}
+                                type="datetime-local"
                                 fullWidth
                                 error={Boolean(formik.touched.startTime && formik.errors.startTime)}
                                 helperText={formik.touched.startTime && formik.errors.startTime}

@@ -7,6 +7,7 @@ const prisma = new PrismaClient()
 
 // getting all bugs
 const getBugs = async (req: Request, res: Response) => {
+    console.log(req.body)
     // get the data from req.body
     const project_id: number = req.body.project_id ?? null;
     const user_id: number = req.body.user_id ?? null;
@@ -69,8 +70,8 @@ const getBugs = async (req: Request, res: Response) => {
             const b: Object= {
                 id: bug.id,
                 description: bug.description,
-                username: bug.user.name + bug.user.surname,
-                project: bug.project,
+                username: `${bug.user.name} ${bug.user.surname}`,
+                project: bug.project.name,
                 CreationDate: bug.creationDate
             }
             data.push(b);
