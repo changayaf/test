@@ -8,59 +8,75 @@ const prisma = new PrismaClient()
 
 // getting all bugs
 const getBugs = async (req: Request, res: Response) => {
+    console.log(req.query)
     // get the data from req.query
-    const  { project_id_query, user_id_query, start_date_query, end_date_query } = req.query;
+    const  { project_id, user_id, start_date, end_date } = req.query;
 
-    console.log(project_id_query)
-    console.log(user_id_query)
-    console.log(start_date_query)
-    console.log(end_date_query)
+    console.log(project_id)
+    console.log(user_id)
+    console.log(start_date)
+    console.log(end_date)
 
-    if(! (project_id_query !== undefined || user_id_query !== undefined || start_date_query !== undefined || end_date_query !== undefined)){
+    if(! (project_id !== undefined || user_id !== undefined || start_date !== undefined || end_date !== undefined)){
         return res.status(500).json({
             error: 'At least one search parameter must be provided',
             message: 'At least one search parameter must be provided',
         });
     }
     
-    const project_id: number = Number(project_id_query);
-    const user_id: number = Number(user_id_query);
-    const start_date: string = String(start_date_query); 
-    const end_date: string = String(end_date_query);
+    let projectId: number | undefined = undefined;
+    let userId: number | undefined = undefined;
+    let startDate: string | undefined = undefined; 
+    let endDate: string | undefined = undefined;
 
     // validate that at least one parameter comes    
-    if(isNaN(user_id)){
-        return res.status(500).json({
-            error: 'The user_id field must be an integer',
-            message: 'The user_id field must be an integer',
-        });
+    if(user_id !== undefined){
+        userId = Number(user_id);
+        if(isNaN(userId)){
+            return res.status(500).json({
+                error: 'The user_id field must be an integer',
+                message: 'The user_id field must be an integer',
+            });
+        }
     }
-    if(isNaN(project_id)){
-        return res.status(500).json({
-            error: 'The project_id field must be an integer',
-            message: 'The project_id field must be an integer',
-        });
+    if(project_id !== undefined){
+        projectId = Number(project_id);
+        if(isNaN(projectId)){
+            return res.status(500).json({
+                error: 'The project_id field must be an integer',
+                message: 'The project_id field must be an integer',
+            });
+        }
     }
-    if(start_date !== null && !moment(start_date).isValid()){
-        return res.status(500).json({
-            error: 'The start_date provided is not valid',
-            message: 'The start_date provided is not valid',
-        });
+    
+    if(start_date !== undefined){
+        startDate = String(start_date);
+        if(!moment(startDate).isValid()){
+            return res.status(500).json({
+                error: 'The start_date provided is not valid',
+                message: 'The start_date provided is not valid',
+            });
+        }
+        
     }
-    if(end_date !== null && !moment(end_date).isValid()){
-        return res.status(500).json({
-            error: 'The end_date provided is not valid',
-            message: 'The end_date provided is not valid',
-        });
+    if(end_date !== undefined ){
+        endDate = String(end_date);
+        if(!moment(endDate).isValid()){
+            return res.status(500).json({
+                error: 'The end_date provided is not valid',
+                message: 'The end_date provided is not valid',
+            });
+        }
+        
     }
     
     // preparing the search "Where" condition
     let searchWhere: Object = {
-        projectId: project_id ?? undefined,
-        userId: user_id  ?? undefined,
+        projectId: projectId ?? undefined,
+        userId: userId  ?? undefined,
         creationDate: {
-            gte: start_date ?? undefined,
-            lt:  end_date ?? undefined
+            gte: new Date(startDate) ?? undefined,
+            lt:  endDate ?? undefined
         }
     }
     
