@@ -3,23 +3,32 @@ import moment from 'moment';
 
 import { PrismaClient } from '@prisma/client';
 import { use } from '../routes/routes';
+import { UrlWithParsedQuery } from 'url';
 const prisma = new PrismaClient()
 
 // getting all bugs
 const getBugs = async (req: Request, res: Response) => {
-    console.log(req.body)
-    // get the data from req.body
-    const project_id: number = req.body.project_id ?? null;
-    const user_id: number = req.body.user_id ?? null;
-    const start_date: string = req.body.start_date ?? null; 
-    const end_date: string = req.body.end_date ?? null;
-    // validate that at least one parameter comes
-    if(! (project_id !== null || user_id !== null || start_date !== null || end_date !== null)){
+    // get the data from req.query
+    const  { project_id_query, user_id_query, start_date_query, end_date_query } = req.query;
+
+    console.log(project_id_query)
+    console.log(user_id_query)
+    console.log(start_date_query)
+    console.log(end_date_query)
+
+    if(! (project_id_query !== undefined || user_id_query !== undefined || start_date_query !== undefined || end_date_query !== undefined)){
         return res.status(500).json({
             error: 'At least one search parameter must be provided',
             message: 'At least one search parameter must be provided',
         });
     }
+    
+    const project_id: number = Number(project_id_query);
+    const user_id: number = Number(user_id_query);
+    const start_date: string = String(start_date_query); 
+    const end_date: string = String(end_date_query);
+
+    // validate that at least one parameter comes    
     if(isNaN(user_id)){
         return res.status(500).json({
             error: 'The user_id field must be an integer',
