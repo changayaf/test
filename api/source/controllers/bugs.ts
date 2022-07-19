@@ -28,6 +28,8 @@ const getBugs = async (req: Request, res: Response) => {
     let userId: number | undefined = undefined;
     let startDate: string | undefined = undefined; 
     let endDate: string | undefined = undefined;
+    let startDateS: Date | undefined = undefined; 
+    let endDateS: Date | undefined = undefined;
 
     // validate that at least one parameter comes    
     if(user_id !== undefined){
@@ -56,8 +58,9 @@ const getBugs = async (req: Request, res: Response) => {
                 error: 'The start_date provided is not valid',
                 message: 'The start_date provided is not valid',
             });
-        }
-        
+        } else {
+            startDateS = new Date(startDate);
+        }        
     }
     if(end_date !== undefined ){
         endDate = String(end_date);
@@ -66,8 +69,9 @@ const getBugs = async (req: Request, res: Response) => {
                 error: 'The end_date provided is not valid',
                 message: 'The end_date provided is not valid',
             });
-        }
-        
+        } else {
+            endDateS = new Date(endDate);
+        }        
     }
     
     // preparing the search "Where" condition
@@ -75,8 +79,8 @@ const getBugs = async (req: Request, res: Response) => {
         projectId: projectId ?? undefined,
         userId: userId  ?? undefined,
         creationDate: {
-            gte: new Date(startDate) ?? undefined,
-            lt:  endDate ?? undefined
+            gte: startDateS ?? undefined,
+            lt:  endDateS ?? undefined
         }
     }
     

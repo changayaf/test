@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 
 // Material UI
-import { Alert, Box, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Select, MenuItem, TextField, Button, Stack, InputLabel, FormControl, Grid }  from '@mui/material';
+import { Alert, Box, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Select, MenuItem, TextField, Button, Stack, InputLabel, FormControl, Grid, AlertTitle }  from '@mui/material';
 
 // Atoms
 import Loading from '@components/atoms/Loading';
@@ -54,18 +54,19 @@ const Home = ({userList, projectList}) => {
           setLoading(true);
           setErrorMsg('');
           setResponseMsg('');
+          console.log(user)
           try {
               await axios.get(`http://localhost:8000/bugs`,{
                   params: {
-                    user: values.user,
-                    project: values.project,
+                    user_id: user,
+                    project_id: project,
                     start_date: values.start_date,
                     end_date: values.end_date,
                   },
               })
               .then(function (response) {
                 console.log(response.data)
-                setResponseMsg(response.data.data);
+                setListBug(response.data.data);
               })
               .catch((error) => {
                   console.log(error.response.data)
@@ -87,11 +88,7 @@ const Home = ({userList, projectList}) => {
     <Layout title="Bugs">
      
             <form onSubmit={formik.handleSubmit}>
-              {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-              {responseMsg && <Alert variant="filled" severity="success">
-                  <AlertTitle>Salary to be paid.</AlertTitle>
-                  The worker will receive a salary of $ <strong>{responseMsg}</strong>
-              </Alert>}
+              {errorMsg && <Alert severity="error">{errorMsg}</Alert>}              
               <Container maxWidth="md" component="main">
               <Grid container alignItems="flex-end">
                 <FormControl fullWidth>
@@ -102,7 +99,7 @@ const Home = ({userList, projectList}) => {
                     labelId="userLabel"
                     onChange={handleChangeUserSelect}
                     onBlur={formik.handleBlur}
-                    value={formik.values.user}
+                    value={user}
                     error={Boolean(formik.touched.user && formik.errors.user)}
                     helperText={formik.touched.user && formik.errors.user}
                   >
@@ -121,7 +118,7 @@ const Home = ({userList, projectList}) => {
                     id='project'
                     label="Project"
                     labelId="projectLabel"
-                    value={formik.values.project}
+                    value={project}
                     onChange={handleChangeProjectSelect}
                     onBlur={formik.handleBlur}
                     error={Boolean(formik.touched.project && formik.errors.project)}
