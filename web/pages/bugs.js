@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 
 // Material UI
-import { Alert, Box, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Select, MenuItem, TextField, Button, Stack, InputLabel, FormControl, Grid, AlertTitle }  from '@mui/material';
+import { Alert, Box,  Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Select, MenuItem, TextField, Button, Stack, InputLabel, FormControl, Grid, AlertTitle, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions }  from '@mui/material';
 
 // Atoms
 import Loading from '@components/atoms/Loading';
@@ -32,6 +32,18 @@ const Home = ({userList, projectList}) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState('');
   const [project, setProject] = useState('');
+  const [userAdd, setUserAdd] = useState('');
+  const [projectAdd, setProjectAdd] = useState('');
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleChangeUserSelect = (event) => {
     setUser(event.target.value);
@@ -39,6 +51,58 @@ const Home = ({userList, projectList}) => {
   const handleChangeProjectSelect = (event) => {
     setProject(event.target.value);
   };
+  const handleChangeUserSelectAdd = (event) => {
+    setUserAdd(event.target.value);
+    formikAddBug.values.userAdd=event.target.value
+  };
+  const handleChangeProjectSelectAdd = (event) => {
+    setProjectAdd(event.target.value);
+    formikAddBug.values.projectAdd=event.target.value
+  };
+
+  const validationSchemaAddBug = Yup.object({ 
+    userAdd: Yup.string().required("User cannot be empty"),
+    projectAdd: Yup.string().required("Project cannot be empty"),
+    description: Yup.string().required("Description cannot be empty"),
+  });
+  const formikAddBug = useFormik({
+      initialValues: {
+          userAdd: null,
+          projectAdd: null,
+          description: null,
+      },
+      validationSchema: validationSchemaAddBug,
+      onSubmit: async (values) => {
+          setLoading(true);
+          setErrorMsg('');
+          setResponseMsg('');
+          try {
+              await axios.post(`http://localhost:8000/bug`,{
+                  params: {
+                    user: userAdd,
+                    project: projectAdd,
+                    description: values.description,
+                  },
+              })
+              .then(function (response) {
+                console.log(response.data)
+                setListBug(response.data.data);
+              })
+              .catch((error) => {
+                  console.log(error.response.data)
+                  if (error.response.data?.message) {
+                      setErrorMsg(error.response.data.message);
+                    } else {
+                      console.error('An unexpected error happened:', error.response.data);
+                      setErrorMsg('An unexpected error happened');
+                    };                
+              })
+          } catch (error) {
+              setErrorMsg('An unexpected error happened');
+          };
+          setLoading(false);
+      }
+  });
 
   const validationSchema = Yup.object({ 
   });
@@ -85,8 +149,7 @@ const Home = ({userList, projectList}) => {
   });
 
   return (
-    <Layout title="Bugs">
-     
+    <Layout title="Bugs">     
             <form onSubmit={formik.handleSubmit}>
               {errorMsg && <Alert severity="error">{errorMsg}</Alert>}              
               <Container maxWidth="md" component="main">
@@ -186,9 +249,88 @@ const Home = ({userList, projectList}) => {
                 </Box>
             </form>
          <Container maxWidth="md" component="main">
+            <Button variant="outlined" onClick={handleClickOpen}>
+              Add bug
+            </Button>
+            <form onSubmit={formikAddBug.handleSubmit}>
+              <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Add bug</DialogTitle>
+                <DialogContent>
+                  <Container maxWidth="md" component="main">
+                  <Grid container alignItems="flex-end">
+                    <FormControl fullWidth>
+                      <InputLabel id="userLabel">User</InputLabel>
+                      <Select
+                        id="userAdd"
+                        label="User"
+                        labelId="userLabelAdd"
+                        onChange={handleChangeUserSelectAdd}
+                        onBlur={formikAddBug.handleBlur}
+                        value={userAdd}
+                        //onChange={formikAddBug.handleChange}
+                        //value={formikAddBug.values.userAdd}
+                        error={Boolean(formikAddBug.touched.userAdd && formikAddBug.errors.userAdd)}
+                        helperText={formikAddBug.touched.userAdd && formikAddBug.errors.userAdd}
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {userList.data.map((row) => ( 
+                          <MenuItem value={row.id}>{`${row.name} ${row.surname}`}</MenuItem>
+                        ))}
+                      </Select>
+                      <SpaceBar />
+                    </FormControl>
+                    <FormControl fullWidth>                  
+                      <InputLabel id="projectLabel">Project</InputLabel>
+                      <Select
+                        id='projectAdd'
+                        label="Project"
+                        labelId="projectLabelAdd"
+                        value={projectAdd}
+                        onChange={handleChangeProjectSelectAdd}
+                        onBlur={formikAddBug.handleBlur}
+                        error={Boolean(formikAddBug.touched.projectAdd && formikAddBug.errors.projectAdd)}
+                        helperText={formikAddBug.touched.projectAdd && formikAddBug.errors.projectAdd}
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {projectList.data.map((row) => ( 
+                          <MenuItem value={row.id}>{row.name}</MenuItem>
+                        ))}
+                      </Select>
+                      <SpaceBar />               
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <TextField
+                        id="description"
+                        label="Description"
+                        type="Text"
+                        defaultValue={formikAddBug.values.description}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        error={Boolean(formikAddBug.touched.description && formikAddBug.errors.description)}
+                        helperText={formikAddBug.touched.description && formikAddBug.errors.description}
+                        onBlur={formikAddBug.handleBlur}
+                        onChange={formikAddBug.handleChange}
+                        value={formikAddBug.values.description}
+                      />
+                    </FormControl>
+                  </Grid>     
+                  </Container> 
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose} >Cancel</Button>
+                  <Button onClick={formikAddBug.handleSubmit} disabled={loading} type="submit">Add</Button>
+                </DialogActions>
+              </Dialog>
+            </form>
           {loading ? (
             <Loading />
           ) : (
+            
             <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
               <TableHead>

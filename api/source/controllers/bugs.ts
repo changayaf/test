@@ -12,11 +12,6 @@ const getBugs = async (req: Request, res: Response) => {
     // get the data from req.query
     const  { project_id, user_id, start_date, end_date } = req.query;
 
-    console.log(project_id)
-    console.log(user_id)
-    console.log(start_date)
-    console.log(end_date)
-
     if(! (project_id !== undefined || user_id !== undefined || start_date !== undefined || end_date !== undefined)){
         return res.status(500).json({
             error: 'At least one search parameter must be provided',
@@ -190,9 +185,14 @@ const deleteBug = async (req: Request, res: Response) => {
 const addBug = async (req: Request, res: Response) => {
     try {
         // get the data from req.body
-        const description: string = req.body.description;
-        const user: number = req.body.user;
-        const project: number = req.body.project; 
+        const description: string = req.body.params.description;
+        const user: number = req.body.params.user;
+        const project: number = req.body.params.project; 
+
+
+        console.log(description)
+        console.log(user)
+        console.log(project)
         if(isNaN(user)){
             return res.status(500).json({
                 error: 'The user field must be an integer',
@@ -205,22 +205,50 @@ const addBug = async (req: Request, res: Response) => {
                 message: 'The project field must be an integer',
             });
         }
+
+
+        const userSearch = await prisma.user.findUnique({
+            where: {
+                id: user
+            }
+        })
+        if (!userSearch){
+            return res.status(500).json({
+                error: 'There is no user with that Name',
+                message: 'There is no user with that Name',
+            }); 
+        }
+        const projectSearch = await prisma.project.findUnique({
+            where: {
+                id: project
+            }
+        })
+        if (!projectSearch){
+            return res.status(500).json({
+                error: 'There is no project with that Name',
+                message: 'There is no project with that Name',
+            }); 
+        }
         // add the user
         const bug = await prisma.bug.create({
             data: {
                 description: description,
                 user: {
                     connect: {
-                        id: user
+                        id: userSearch.id
                     }
                 },
                 project: {
                     connect: {
-                        id: project
+                        id: projectSearch.id
                     }
                 }
             }
         })
+        .catch(error =>{
+            console.log(error)
+        })
+        console.log(bug)
         // return response
         return res.status(200).json({
             data: bug,
