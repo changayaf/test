@@ -31,7 +31,7 @@ const SalaryToPay = () => {
         salaryHours: Yup
             .number()
             .typeError('You must specify a number')
-            .min(4, 'Min value 4.')
+            .min(1, 'Min value 4.')
             .max(30, 'Max value 30.'),
         multiplier: Yup
             .number()
@@ -106,7 +106,7 @@ const SalaryToPay = () => {
                             <TextField
                                 id="startTime"
                                 name="startTime"
-                                type="datetime-local"
+                                type="time"
                                 fullWidth
                                 error={Boolean(formik.touched.startTime && formik.errors.startTime)}
                                 helperText={formik.touched.startTime && formik.errors.startTime}

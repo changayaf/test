@@ -35,6 +35,9 @@ const getBugs = async (req: Request, res: Response) => {
                 message: 'The user_id field must be an integer',
             });
         }
+        if(userId===0){
+            userId = undefined 
+        }
     }
     if(project_id !== undefined){
         projectId = Number(project_id);
@@ -43,6 +46,9 @@ const getBugs = async (req: Request, res: Response) => {
                 error: 'The project_id field must be an integer',
                 message: 'The project_id field must be an integer',
             });
+        }
+        if(projectId===0){
+            projectId = undefined 
         }
     }
     
@@ -87,6 +93,7 @@ const getBugs = async (req: Request, res: Response) => {
            project: true
         }
     });
+    console.log(bugs)
 
     if (bugs){
         let data: Object[] = []; 
