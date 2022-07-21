@@ -26,10 +26,10 @@ model Bug {
   id           Int       @id @default(autoincrement())
   description  String?
   project      Project   @relation(fields: [projectId], references: [id])
-  projectId    Int       @unique
+  projectId    Int       
   creationDate DateTime? @default(now())
   user         User      @relation(fields: [userId], references: [id])
-  userId       Int       @unique
+  userId       Int      
 }
 
 model Project {

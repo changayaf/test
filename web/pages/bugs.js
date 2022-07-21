@@ -86,7 +86,8 @@ const Home = ({userList, projectList}) => {
               })
               .then(function (response) {
                 console.log(response.data)
-                setListBug(response.data.data);
+                setResponseMsg(response.data.message);
+                handleClose()
               })
               .catch((error) => {
                   console.log(error.response.data)
